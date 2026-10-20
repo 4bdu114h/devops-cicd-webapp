@@ -1,35 +1,568 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DevOps CI/CD Web Application</title>
+  <meta name="theme-color" content="#0b1020">
+  <title>DevOps Control Center</title>
+
   <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #131b2e;
+      --panel2: #18233a;
+      --border: #273650;
+      --text: #edf3ff;
+      --muted: #93a4c2;
+      --blue: #69a7ff;
+      --green: #48d6a0;
+      --yellow: #ffd166;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: white;
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(ellipse at top left, #17294a 0, transparent 45%),
+        var(--bg);
+    }
+
+    .container {
+      width: min(1180px, 92%);
+      margin: auto;
+      padding: 30px 0 45px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 13px;
+      align-items: center;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
       display: grid;
       place-items: center;
-      min-height: 100vh;
+      border-radius: 14px;
+      font-size: 25px;
+      background: linear-gradient(135deg, #367af5, #7b61ff);
+    }
+
+    h1, h2, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: clamp(22px, 4vw, 30px);
+      margin-bottom: 5px;
+    }
+
+    h2 {
+      font-size: 18px;
+      margin-bottom: 7px;
+    }
+
+    .subtitle,
+    .muted {
+      color: var(--muted);
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: var(--panel);
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      display: inline-block;
+    }
+
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      background: linear-gradient(115deg, #172a4c, #172039);
+      border: 1px solid #2b4269;
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 22px;
+    }
+
+    .hero h2 {
+      font-size: 25px;
+      margin: 12px 0 8px;
+    }
+
+    .hero p {
+      color: #b7c6df;
+      margin-bottom: 0;
+      line-height: 1.6;
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.6px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+      margin-bottom: 22px;
+    }
+
+    .card {
+      min-width: 0;
+      padding: 20px;
+      background: rgba(19, 27, 46, .94);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .metric {
+      font-size: 27px;
+      font-weight: 750;
+      margin: 12px 0 6px;
+    }
+
+    .metric-note {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .blue {
+      color: var(--blue);
+    }
+
+    .green {
+      color: var(--green);
+    }
+
+    .section {
+      margin-bottom: 22px;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .section-heading h2 {
       margin: 0;
     }
-    main {
-      text-align: center;
-      background: #1e293b;
-      padding: 3rem;
-      border-radius: 16px;
-      box-shadow: 0 12px 30px rgba(0,0,0,.3);
+
+    .section-heading p {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 5px 0 0;
     }
-    h1 { color: #38bdf8; }
-    .status { color: #4ade80; font-weight: bold; }
+
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stage {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 17px;
+    }
+
+    .stage-number {
+      color: var(--blue);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .stage h3 {
+      font-size: 14px;
+      margin: 12px 0 7px;
+    }
+
+    .stage p {
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--muted);
+      margin: 0 0 14px;
+    }
+
+    .stage-status {
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--green);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 410px;
+      font-size: 12px;
+    }
+
+    th, td {
+      padding: 13px 10px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    td {
+      color: #dce6fa;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 6px;
+      background: #15382f;
+      color: var(--green);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 15px;
+      margin-bottom: 22px;
+    }
+
+    .info-item {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 17px;
+    }
+
+    .info-item .label {
+      color: var(--muted);
+      font-size: 11px;
+      margin-bottom: 9px;
+    }
+
+    .info-item .value {
+      font-size: 14px;
+      font-weight: 650;
+      overflow-wrap: anywhere;
+    }
+
+    footer {
+      color: var(--muted);
+      font-size: 11px;
+      text-align: center;
+      padding-top: 12px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 800px) {
+      .pipeline {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero {
+        padding: 20px;
+      }
+
+      .card {
+        padding: 15px;
+      }
+
+      .metric {
+        font-size: 23px;
+      }
+
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
+
 <body>
-  <main>
-    <h1>DevOps CI/CD Web Application</h1>
-    <p>Automated deployment using GitHub Actions, SSH, Bash, Docker, and systemd.</p>
-    <p class="status">Version 1.0 — Deployment Ready</p>
+  <main class="container">
+
+    <!-- Header -->
+    <header>
+      <div class="brand">
+        <div class="logo">⚙</div>
+        <div>
+          <h1>DevOps Control Center</h1>
+          <p class="subtitle">
+            Continuous Integration · Deployment · Service Management
+          </p>
+        </div>
+      </div>
+
+      <div class="badge">
+        <span class="dot"></span>
+        Azure Deployment
+      </div>
+    </header>
+
+    <!-- Application Overview -->
+    <section class="hero">
+      <div>
+        <div class="eyebrow">APPLICATION OVERVIEW</div>
+        <h2>DevOps CI/CD Web Application</h2>
+        <p>
+          A Dockerized web application hosted on Azure Ubuntu,
+          served by Nginx and managed using systemd.
+        </p>
+        <p style="margin-top: 12px; font-size: 12px;">
+          Environment: <strong>Azure VM</strong>
+          &nbsp;·&nbsp;
+          Version: <strong id="heroVersion">v2.0.0</strong>
+        </p>
+      </div>
+    </section>
+
+    <!-- Key Information -->
+    <section class="grid">
+      <article class="card">
+        <div class="metric-label">APPLICATION VERSION</div>
+        <div class="metric blue" id="versionMetric">v2.0.0</div>
+        <div class="metric-note">Current application release</div>
+      </article>
+
+      <article class="card">
+        <div class="metric-label">PIPELINE STAGES</div>
+        <div class="metric blue">4</div>
+        <div class="metric-note">Code → Build → Deploy → Run</div>
+      </article>
+    </section>
+
+    <!-- CI/CD Pipeline -->
+    <section class="section card">
+      <div class="section-heading">
+        <div>
+          <h2>CI/CD Pipeline</h2>
+          <p>
+            Workflow overview from source code to the deployed application
+          </p>
+        </div>
+
+        <span class="badge">GitHub Actions</span>
+      </div>
+
+      <div class="pipeline">
+
+        <article class="stage">
+          <div class="stage-number">STAGE 01</div>
+          <h3>Source Code</h3>
+          <p>
+            The developer updates the application and pushes changes
+            to the GitHub repository.
+          </p>
+          <div class="stage-status">● Source control: GitHub</div>
+        </article>
+
+        <article class="stage">
+          <div class="stage-number">STAGE 02</div>
+          <h3>Continuous Integration</h3>
+          <p>
+            GitHub Actions runs the configured workflow to build
+            the Docker image.
+          </p>
+          <div class="stage-status">● CI workflow configured</div>
+        </article>
+
+        <article class="stage">
+          <div class="stage-number">STAGE 03</div>
+          <h3>Continuous Deployment</h3>
+          <p>
+            The deployment workflow is intended to connect to Ubuntu
+            through SSH and run the deployment script.
+          </p>
+          <div class="stage-status">
+            ● Automatic CD pending end-to-end verification
+          </div>
+        </article>
+
+        <article class="stage">
+          <div class="stage-number">STAGE 04</div>
+          <h3>Application Runtime</h3>
+          <p>
+            Docker Compose runs the container, while systemd manages
+            the application's service lifecycle.
+          </p>
+          <div class="stage-status">● Server configured</div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Deployment History -->
+    <section class="section card">
+      <div class="section-heading">
+        <div>
+          <h2>Deployment History</h2>
+          <p>Application release and deployment information</p>
+        </div>
+
+        <span class="badge">Release records</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Version</th>
+              <th>Deployment Target</th>
+              <th>Technology</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>v2.0.0</td>
+              <td>Azure Ubuntu VM</td>
+              <td>Docker + Nginx</td>
+              <td>
+                <span class="status-pill">Current dashboard</span>
+              </td>
+            </tr>
+
+            <tr>
+              <td>v1.0.0</td>
+              <td>Azure Ubuntu VM</td>
+              <td>Docker + Nginx</td>
+              <td>
+                <span class="status-pill">Initial application</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Infrastructure Details -->
+    <section class="section">
+      <div class="section-heading">
+        <div>
+          <h2>Deployment Infrastructure</h2>
+          <p>Technologies used to host and manage the application</p>
+        </div>
+      </div>
+
+      <div class="info-grid">
+
+        <article class="info-item">
+          <div class="label">CLOUD PLATFORM</div>
+          <div class="value">Microsoft Azure</div>
+        </article>
+
+        <article class="info-item">
+          <div class="label">OPERATING SYSTEM</div>
+          <div class="value">Ubuntu 22.04 LTS</div>
+        </article>
+
+        <article class="info-item">
+          <div class="label">CONTAINERIZATION</div>
+          <div class="value">Docker Compose</div>
+        </article>
+
+        <article class="info-item">
+          <div class="label">WEB SERVER</div>
+          <div class="value">Nginx</div>
+        </article>
+
+        <article class="info-item">
+          <div class="label">SERVICE MANAGEMENT</div>
+          <div class="value">systemd</div>
+        </article>
+
+        <article class="info-item">
+          <div class="label">SOURCE CONTROL / CI</div>
+          <div class="value">GitHub / GitHub Actions</div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div>DevOps CI/CD Web Application</div>
+      <div>
+        HTML · CSS · JavaScript · Docker · Nginx · Azure Ubuntu
+      </div>
+      <div>
+        Automated deployment is subject to successful GitHub Actions configuration.
+      </div>
+    </footer>
+
   </main>
+
+  <script>
+    const VERSION = "v2.0.0";
+
+    document.getElementById("versionMetric").textContent = VERSION;
+    document.getElementById("heroVersion").textContent = VERSION;
+  </script>
 </body>
 </html>
